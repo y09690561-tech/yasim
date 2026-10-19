@@ -11,10 +11,10 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+      "canvas": "^2.11.2",
       "discord.js": "^14.17.3",
-      "fs": "^0.0.1-security",
-      "gifencoder": "^2.0.1",
-      "dotenv":"16.4.7",
-      "express":"4.21.2"
+      "dotenv": "^16.4.7",
+      "express": "^4.21.2",
+      "gifencoder": "^2.0.1"
     }
-  }
+}

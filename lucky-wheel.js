@@ -173,9 +173,10 @@ export async function createLuckyWheelGif(winners, selectedWinnerIndex, avatarUr
             return "#"+RR+GG+BB;
         }
 
-        // حركة العجلة
-        const minValue = 4.50294947014537 - (0.28- parseInt(`0.${winners.length}`)) ;
-        const maxValue = 4.50294947014537 + (0.28- parseInt(`0.${winners.length}`)) ;
+// حركة العجلة - التعديل الصحيح للنسبة
+        const offset = 0.28 - (winners.length > 0 ? (1 / winners.length) : 0);
+        const minValue = 4.50294947014537 - offset;
+        const maxValue = 4.50294947014537 + offset;
         const targetAngle = Math.random() * (maxValue - minValue) + minValue;
         
         const fullRotations = 2; // زيادة عدد الدورات

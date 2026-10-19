@@ -2,8 +2,19 @@ import { Client, GatewayIntentBits, SlashCommandBuilder, AttachmentBuilder, Embe
 import { createLuckyWheelGif } from './lucky-wheel.js';
 import fs from 'fs/promises';
 import 'dotenv/config';
-import express from "express"
+import express from "express";
+
 const app = express();
+
+// إعداد سيرفر Express متوافق مع الاستضافات المجانية
+app.get('/', (req, res) => {
+  res.send('<body><center><h1>Bot 24H ON!</h1></center></body>');
+});
+
+const PORT = process.env.PORT || 2000;
+app.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
+});
 
 const client = new Client({
     intents: [
@@ -11,20 +22,12 @@ const client = new Client({
         GatewayIntentBits.GuildMessages
     ]
 });
-var listener = app.listen(process.env.PORT || 2000, function () {
-  console.log('Your app is listening on port ' + listener.address().port);
-});
-app.listen(() => console.log("I'm Ready To Work..! 24H"));
-app.get('/', (req, res) => {
-  res.send(`
-  <body>
-  <center><h1>Bot 24H ON!</h1></center
-  </body>`)
-});
+
 async function loadPrizes() {
     const data = await fs.readFile('./prizes.json', 'utf8');
     return JSON.parse(data);
 }
+
 function selectWinner(prizes) {
     const totalWeight = prizes.reduce((sum, prize) => sum + prize.percentage, 0);
     let random = Math.random() * totalWeight;
@@ -52,7 +55,7 @@ client.once('ready', async () => {
     console.log(`تم تسجيل الدخول كـ ${client.user.tag}`);
     
     try {
-        await client.application.commands.create(wheelCommand);
+        await client.application.commands.create(wheelCommand.toJSON());
         console.log('تم تسجيل الأمر بنجاح');
     } catch (error) {
         console.error('خطأ في تسجيل الأمر:', error);
@@ -69,11 +72,9 @@ client.on('interactionCreate', async interaction => {
         const prizes = await loadPrizes();
         const user = interaction.options.getUser('user');
         
-        // اختيار الفائز بناءً على النسب المئوية
         const selectedWinnerIndex = selectWinner(prizes);
         const winner = prizes[selectedWinnerIndex];
         
-        // إنشاء GIF
         const gifBuffer = await createLuckyWheelGif(
             prizes,
             selectedWinnerIndex,
